@@ -17,7 +17,8 @@
                 <span class="text-sm text-gray-600 dark:text-gray-300">Donker</span>
                 <div class="relative w-10 h-4 bg-gray-400 rounded-full transition-colors duration-200">
                     <input id="theme-toggle" type="checkbox" class="hidden" />
-                    <div id="toggle-ball" class="w-6 h-6 bg-white dark:bg-gray-600 border-2 border-gray-300 dark:border-gray-500 rounded-full absolute left-0 top-0 transform transition-transform duration-200"></div>
+                    <div id="toggle-ball"
+                         class="w-6 h-6 bg-white dark:bg-gray-600 border-2 border-gray-300 dark:border-gray-500 rounded-full absolute left-0 top-0 transform transition-transform duration-200"></div>
                 </div>
             </label>
         </div>
@@ -31,7 +32,7 @@
             <form method="POST" class="space-y-4">
                 <label for="user_text" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Bericht</label>
                 <input type="text" id="user_text" name="user_text" placeholder="Typ hier je bericht..." required
-                    class="w-full border rounded-md py-2 px-3 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                       class="w-full border rounded-md py-2 px-3 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <button type="submit"
                         class="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold py-3 rounded-md transition-all duration-200 shadow-sm">Versturen</button>
             </form>
@@ -40,18 +41,19 @@
 
 <script>
 const toggle = document.getElementById('theme-toggle');
-const ball = document.getElementById('toggle-ball');
+const ball   = document.getElementById('toggle-ball');
 function updateTheme(){
   if(toggle.checked){
     document.documentElement.classList.add('dark');
-    ball.style.transform='translateX(100%)';
+    // Move the ball to the right side (container width 40px, ball width 24px → shift 16px)
+    ball.style.transform = 'translateX(16px)';
   } else {
     document.documentElement.classList.remove('dark');
-    ball.style.transform='translateX(0)';
+    ball.style.transform = 'translateX(0)';
   }
 }
 toggle.addEventListener('change', updateTheme);
-// initialize
+// initialize on page load
 updateTheme();
 </script>
 </body>
