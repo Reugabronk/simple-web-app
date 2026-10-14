@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Mijn Moderne App (JS)</title>
+  <!-- Tailwind via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>body{font-family:'Inter',sans-serif;}</style>
+</head>
+<body class="bg-gradient-to-br from-indigo-100 to-purple-200 min-h-screen flex items-center justify-center p-4">
+<div class="max-w-md w-full bg-white rounded-lg shadow-xl p-6 space-y-4">
+  <h1 class="text-2xl font-semibold text-gray-900">Welkom bij mijn App</h1>
+  <form id="myForm" class="space-y-4">
+    <label for="user_text" class="block text-sm font-medium text-gray-700">Bericht</label>
+    <input type="text" id="user_text" name="user_text" placeholder="Typ hier je bericht..." required
+           class="w-full border rounded-md py-2 px-3 bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <button type="submit"
+            class="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold py-3 rounded-md shadow-sm transition-colors">Versturen</button>
+  </form>
+  <div id="result" class="mt-4 hidden">
+    <div class="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-md"></div>
+  </div>
+</div>
+
+<script>
+document.getElementById('myForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const text = document.getElementById('user_text').value;
+  const resDiv = document.querySelector('#result > div');
+  resDiv.textContent = 'Je hebt getypt: ' + text;
+  document.getElementById('result').classList.remove('hidden');
+});
+</script>
+</body>
+</html>
