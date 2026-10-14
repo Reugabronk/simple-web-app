@@ -1,50 +1,58 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="nl" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mijn Moderne App</title>
-    <!-- Tailwind CSS via CDN voor een moderne look -->
+    <!-- Tailwind via CDN, JIT mode -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-    </style>
+    <style>body{font-family:'Inter',sans-serif;}html{overflow-y:scroll}</style>
 </head>
-<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
-    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border border-slate-100">
-        <div class="mb-8">
-            <h1 class="text-2xl font-bold text-slate-900">Welkom bij mijn App</h1>
-            <p class="text-slate-500 text-sm">Typ iets hieronder en klik op de knop.</p>
+<body class="bg-gradient-to-br from-indigo-100 to-purple-200 dark:from-gray-900 dark:to-gray-800 min-h-screen flex items-center justify-center p-4">
+    <div class="relative max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+        <!-- Header with toggle -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h1 class="text-xl font-semibold text-gray-900 dark:text-white">Welkom bij mijn App</h1>
+            <label for="theme-toggle" class="cursor-pointer flex items-center space-x-2">
+                <span class="text-sm text-gray-600 dark:text-gray-300">Donker</span>
+                <div class="relative w-10 h-4 bg-gray-400 rounded-full transition-colors duration-200">
+                    <input id="theme-toggle" type="checkbox" class="hidden" />
+                    <div id="toggle-ball" class="w-6 h-6 bg-white dark:bg-gray-600 border-2 border-gray-300 dark:border-gray-500 rounded-full absolute left-0 top-0 transform transition-transform duration-200"></div>
+                </div>
+            </label>
         </div>
-        
-        <form method="POST" class="space-y-4">
-            <div>
-                <label for="user_text" class="block text-sm font-medium text-slate-700 mb-1">Bericht</label>
-                <input 
-                    type="text" 
-                    id="user_text" 
-                    name="user_text" 
-                    placeholder="Bijvoorbeeld: Hallo wereld!" 
-                    required
-                    class="w-full px-4 py-3 rounded-lg border border-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                >
-            </div>
-            <button 
-                type="submit" 
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors shadow-md active:transform active:scale-[0.98]"
-            >
-                Versturen
-            </button>
-        </form>
 
-        {% if result %}
-            <div class="mt-8 p-4 bg-blue-50 border border-blue-100 rounded-lg">
-                <p class="text-sm text-blue-800">
-                    <span class="font-bold">Resultaat:</span> {{ result }}
-                </p>
-            </div>
-        {% endif %}
+        <!-- Content -->
+        <div class="p-6">
+            {% if result %}
+                <div class="mb-4 p-4 bg-blue-50 dark:bg-blue-950 border-l-4 border-blue-500 rounded-md">{{ result }}</div>
+            {% endif %}
+
+            <form method="POST" class="space-y-4">
+                <label for="user_text" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Bericht</label>
+                <input type="text" id="user_text" name="user_text" placeholder="Typ hier je bericht..." required
+                    class="w-full border rounded-md py-2 px-3 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button type="submit"
+                        class="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold py-3 rounded-md transition-all duration-200 shadow-sm">Versturen</button>
+            </form>
+        </div>
     </div>
+
+<script>
+const toggle = document.getElementById('theme-toggle');
+const ball = document.getElementById('toggle-ball');
+function updateTheme(){
+  if(toggle.checked){
+    document.documentElement.classList.add('dark');
+    ball.style.transform='translateX(100%)';
+  } else {
+    document.documentElement.classList.remove('dark');
+    ball.style.transform='translateX(0)';
+  }
+}
+toggle.addEventListener('change', updateTheme);
+// initialize
+updateTheme();
+</script>
 </body>
 </html>
