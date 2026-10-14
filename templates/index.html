@@ -1,60 +1,79 @@
 <!DOCTYPE html>
-<html lang="nl" class="dark">
+<html lang="nl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mijn Moderne App</title>
-    <!-- Tailwind via CDN, JIT mode -->
+
+    <!-- Thema zo vroeg mogelijk zetten om een witte flits te voorkomen -->
+    <script>
+        (function () {
+            var theme = null;
+            try { theme = localStorage.getItem('theme'); } catch (e) {}
+            if (!theme) {
+                theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            if (theme === 'dark') document.documentElement.classList.add('dark');
+        })();
+    </script>
+
+    <!-- Tailwind via CDN; darkMode 'class' zodat de toggle werkt i.p.v. de systeeminstelling -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' };</script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>body{font-family:'Inter',sans-serif;}html{overflow-y:scroll}</style>
+    <style>body{font-family:'Inter',system-ui,sans-serif;}html{overflow-y:scroll}</style>
 </head>
-<body class="bg-gradient-to-br from-indigo-100 to-purple-200 dark:from-gray-900 dark:to-gray-800 min-h-screen flex items-center justify-center p-4 text-gray-700 dark:text-gray-200">
-    <div class="relative max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
-        <!-- Header with toggle -->
+<body class="bg-gradient-to-br from-indigo-100 to-purple-200 dark:from-gray-900 dark:to-gray-800 min-h-screen flex items-center justify-center p-4 text-gray-700 dark:text-gray-200 transition-colors duration-200">
+    <main class="relative max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+        <!-- Header met toggle -->
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <h1 class="text-xl font-semibold text-gray-900 dark:text-white">Welkom bij mijn App</h1>
-            <label for="theme-toggle" class="cursor-pointer flex items-center space-x-2">
+            <label for="theme-toggle" class="cursor-pointer flex items-center gap-2 select-none">
                 <span class="text-sm text-gray-600 dark:text-gray-300">Donker</span>
-                <div class="relative w-10 h-4 bg-gray-400 rounded-full transition-colors duration-200">
-                    <input id="theme-toggle" type="checkbox" class="hidden" />
-                    <div id="toggle-ball"
-                         class="w-6 h-6 bg-white dark:bg-gray-600 border-2 border-gray-300 dark:border-gray-500 rounded-full absolute left-0 top-0 transform transition-transform duration-200"></div>
-                </div>
+                <input id="theme-toggle" type="checkbox" role="switch" class="peer sr-only" aria-label="Donkere modus">
+                <span class="relative inline-block w-11 h-6 rounded-full bg-gray-300 dark:bg-indigo-500 transition-colors duration-200
+                             peer-focus-visible:ring-2 peer-focus-visible:ring-indigo-400 peer-focus-visible:ring-offset-2 dark:peer-focus-visible:ring-offset-gray-800">
+                    <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-200 dark:translate-x-5"></span>
+                </span>
             </label>
         </div>
 
         <!-- Content -->
         <div class="p-6">
             {% if result %}
-                <div class="mb-4 p-4 bg-blue-50 dark:bg-blue-950 border-l-4 border-blue-500 rounded-md">{{ result }}</div>
+                <div class="mb-4 p-4 bg-blue-50 dark:bg-blue-950 border-l-4 border-blue-500 rounded-md break-words" role="status">{{ result }}</div>
+            {% endif %}
+            {% if error %}
+                <div class="mb-4 p-4 bg-red-50 dark:bg-red-950 border-l-4 border-red-500 rounded-md" role="alert">{{ error }}</div>
             {% endif %}
 
             <form method="POST" class="space-y-4">
                 <label for="user_text" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Bericht</label>
-                <input type="text" id="user_text" name="user_text" placeholder="Typ hier je bericht..." required
-                       class="w-full border rounded-md py-2 px-3 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" id="user_text" name="user_text" placeholder="Typ hier je bericht..." required maxlength="500"
+                       class="w-full border rounded-md py-2 px-3 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <button type="submit"
                         class="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold py-3 rounded-md transition-all duration-200 shadow-sm">Versturen</button>
             </form>
         </div>
-    </div>
+    </main>
 
 <script>
-const toggle = document.getElementById('theme-toggle');
-const ball   = document.getElementById('toggle-ball');
-function updateTheme(){
-  if(toggle.checked){
-    document.documentElement.classList.add('dark');
-    // Move the ball to the right side (container width 40px, ball width 24px → shift 16px)
-    ball.style.transform = 'translateX(16px)';
-  } else {
-    document.documentElement.classList.remove('dark');
-    ball.style.transform = 'translateX(0)';
-  }
-}
-toggle.addEventListener('change', updateTheme);
-// initialize on page load
-updateTheme();
+(function () {
+    var toggle = document.getElementById('theme-toggle');
+    var root = document.documentElement;
+
+    // Toggle laten overeenkomen met het thema dat al in de <head> is gezet
+    toggle.checked = root.classList.contains('dark');
+
+    toggle.addEventListener('change', function () {
+        var dark = toggle.checked;
+        root.classList.toggle('dark', dark);
+        try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch (e) {}
+    });
+})();
 </script>
 </body>
 </html>
